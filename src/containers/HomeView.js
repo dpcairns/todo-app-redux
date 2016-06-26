@@ -10,7 +10,7 @@ export default class HomeView extends Component {
     handleNewTodoSubmit(e){
       e.preventDefault()
       if (this.props.newTodoInput.length > 0){
-      let newTodo = {text: this.props.newTodoInput, completed: false, id: shortid.generate()}
+      let newTodo = {text: this.props.newTodoInput, completed: false, id: shortid.generate(), showEdit: false}
       this.props.newTodoSubmit(newTodo)
       this.props.sendNewInputToState("")
       }
@@ -19,6 +19,12 @@ export default class HomeView extends Component {
   handleDeleteTodo(id){
       this.props.deleteTodo(id)
     }
+
+  handleShowEdit(id){
+        this.props.toggleEdit(id)
+        this.props.selectTodo(id)
+        console.log(this.props.selectedTodoId)
+      }
 
   handleViewChange(view){
     this.props.changeFilter(view)
@@ -31,7 +37,7 @@ export default class HomeView extends Component {
    }
 
   render() {
-    let {newTodoInput, todoList, filterViews } = this.props
+    let {newTodoInput, todoList, filterViews, selectedTodoId, selectTodo} = this.props
     if(filterViews==="SHOW_COMPLETED"){
       todoList = todoList.filter( (d,i)=> {
         return d.completed
@@ -46,6 +52,15 @@ export default class HomeView extends Component {
         <div key={todo.id}>
         <span style={todo.completed ? {textDecoration: "line-through"} : {textDecoration: "none"} } onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.text} </span> - {todo.completed ? '' : 'you can do it!'} -
         <span onClick={this.handleDeleteTodo.bind(this, todo.id)}>delete?</span>
+        <span onClick={this.handleShowEdit.bind(this, todo.id)}>edit?</span>
+
+
+            {todo.showEdit ?
+            <form>
+              <input type="text"/>
+              <button type="submit">Edit this todo</button>
+            </form> :
+            ''}
         </div>
       )
     })
@@ -70,7 +85,8 @@ const mapStateToProps = (state) => {
   return {
     newTodoInput: state.newTodoInput,
     todoList: state.todoList,
-    filterViews: state.filterViews
+    filterViews: state.filterViews,
+    selectedTodoId: state.selectedTodoId
 
   }
 }
@@ -91,10 +107,20 @@ const deleteTodo = (id) => {
   return {type: "DELETE_TODO", payload: id }
 }
 
+const toggleEdit = (id) => {
+  return {type: "TOGGLE_EDIT", payload: id }
+}
+
+const selectTodo = (id) => {
+  return {type: "SELECT_TODO", payload: id }
+}
+
+
+
 const changeFilter = (view) => {
   return {type: "CHANGE_FILTER", payload: view }
 }
 
-HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo, changeFilter})(HomeView)
+HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo, changeFilter, toggleEdit, selectTodo})(HomeView)
 
 export default HomeView

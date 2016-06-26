@@ -30,6 +30,18 @@ const todoList = (state = [], action) => {
     return [...state.slice(0, state.indexOf(deleteItem) ),
             ...state.slice( (state.indexOf(deleteItem) + 1), (state.length))
             ]
+  case 'TOGGLE_EDIT':
+  return state.map( (todo, i) => {
+      if (todo.id === action.payload){
+      return Object.assign( {}, {
+            text: todo.text,
+            completed: todo.completed,
+            id: todo.id,
+            showEdit: !todo.showEdit
+                    })
+              }
+           return todo
+        })
     default:
     return state
   }
@@ -54,6 +66,16 @@ const todoItem = (state = {}, action) => {
 }
 
 
+const selectedTodoId = (state = "", action) => {
+  switch(action.type){
+    case 'SELECT_TODO':
+
+      console.log(action.payload)
+    return action.payload
+    default:
+    return state
+  }
+}
 
 const TodoApp = combineReducers({
   todoList, todoItem, newTodoInput, filterViews
