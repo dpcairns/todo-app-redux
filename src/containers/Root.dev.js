@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import App from './App';
+import HomeView from './HomeView';
 import DevTools from './DevTools';
 
 /**
@@ -17,7 +17,7 @@ module.exports = class Root extends Component {
        */
       <Provider store={store}>
         <div>
-          <App />
+          <HomeView />
           {/* Being the dev version of our Root component, we include DevTools below */}
           <DevTools />
         </div>
