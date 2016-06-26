@@ -16,6 +16,18 @@ export default class HomeView extends Component {
       }
     }
 
+    handleEditTodoChange(e) {
+      e.preventDefault()
+      this.props.sendEditInputToState(e.target.value)
+    }
+
+    handleEditTodoSubmit(e){
+      e.preventDefault()
+      this.props.editTodo(this.props.selectedTodoId, this.props.editTodoInput)
+      this.props.sendEditInputToState("")
+      this.props.selectTodo("")
+    }
+
   handleDeleteTodo(id){
       this.props.deleteTodo(id)
     }
@@ -37,12 +49,15 @@ export default class HomeView extends Component {
    }
 
   render() {
-    let {newTodoInput, todoList, filterViews, selectedTodoId, selectTodo} = this.props
+    let {newTodoInput, todoList, filterViews, selectedTodoId, selectTodo, editTodoInput} = this.props
+    let filterName = "all"
     if(filterViews==="SHOW_COMPLETED"){
+      filterName= "completed"
       todoList = todoList.filter( (d,i)=> {
         return d.completed
       })
     } else if(filterViews==="SHOW_INCOMPLETE"){
+      filterName= "incomplete"
       todoList = todoList.filter( (d,i)=> {
         return !d.completed
       })
@@ -53,19 +68,18 @@ export default class HomeView extends Component {
         <span style={todo.completed ? {textDecoration: "line-through"} : {textDecoration: "none"} } onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.text} </span> - {todo.completed ? '' : 'you can do it!'} -
         <span onClick={this.handleDeleteTodo.bind(this, todo.id)}>delete?</span>
         <span onClick={this.handleShowEdit.bind(this, todo.id)}>edit?</span>
-
-
-            {todo.showEdit ?
-            <form>
-              <input type="text"/>
-              <button type="submit">Edit this todo</button>
-            </form> :
-            ''}
+        {todo.showEdit ?
+        <form onSubmit={this.handleEditTodoSubmit.bind(this)}>
+          <input type="text" onClick={selectTodo.bind(this, todo.id)} onChange={this.handleEditTodoChange.bind(this)} value={selectedTodoId === todo.id ? editTodoInput : ''} />
+          <button type="submit">Edit this todo</button>
+        </form> :
+        ''}
         </div>
       )
     })
     return(
     <div>
+    <h2>Now showing {filterName} todos</h2>
       {todoListNodes}
       <form onSubmit={this.handleNewTodoSubmit.bind(this)}>
         <input type="text" onChange={this.handleNewTodoChange.bind(this)} value={newTodoInput} />
@@ -84,10 +98,10 @@ export default class HomeView extends Component {
 const mapStateToProps = (state) => {
   return {
     newTodoInput: state.newTodoInput,
+    editTodoInput: state.editTodoInput,
     todoList: state.todoList,
     filterViews: state.filterViews,
     selectedTodoId: state.selectedTodoId
-
   }
 }
 
@@ -115,12 +129,18 @@ const selectTodo = (id) => {
   return {type: "SELECT_TODO", payload: id }
 }
 
+const sendEditInputToState = (text) => {
+  return {type: "EDIT_TODO_FORM_CHANGE", payload: text }
+}
 
+const editTodo = (id, text) => {
+  return {type: "EDIT_TODO", payload: {_id: id, _text: text} }
+}
 
 const changeFilter = (view) => {
   return {type: "CHANGE_FILTER", payload: view }
 }
 
-HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo, changeFilter, toggleEdit, selectTodo})(HomeView)
+HomeView = connect(mapStateToProps, {editTodo, sendEditInputToState, newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo, changeFilter, toggleEdit, selectTodo})(HomeView)
 
 export default HomeView

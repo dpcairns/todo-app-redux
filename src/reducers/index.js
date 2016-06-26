@@ -42,6 +42,18 @@ const todoList = (state = [], action) => {
               }
            return todo
         })
+    case 'EDIT_TODO':
+    return state.map( (todo, i) => {
+      if (todo.id === action.payload._id){
+      return Object.assign( {}, {
+          text: action.payload._text,
+          completed: todo.completed,
+          id: todo.id,
+          showEdit: false
+          })
+      }
+      return todo
+    })
     default:
     return state
   }
@@ -53,6 +65,16 @@ const newTodoInput = (state = "", action) => {
       return action.payload
       default:
       return state
+  }
+}
+
+
+const editTodoInput = (state = "", action) => {
+  switch(action.type){
+    case 'EDIT_TODO_FORM_CHANGE':
+    return action.payload
+    default:
+    return state
   }
 }
 
@@ -78,7 +100,7 @@ const selectedTodoId = (state = "", action) => {
 }
 
 const TodoApp = combineReducers({
-  todoList, todoItem, newTodoInput, filterViews
+  todoList, todoItem, newTodoInput, filterViews, editTodoInput, selectedTodoId
 })
 
 export default TodoApp
