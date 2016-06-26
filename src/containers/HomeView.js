@@ -5,21 +5,25 @@ import shortid from 'shortid'
 export default class HomeView extends Component {
     handleNewTodoChange(e) {
       e.preventDefault()
-      this.props.sendInputToState(e.target.value)
+      this.props.sendNewInputToState(e.target.value)
     }
     handleNewTodoSubmit(e){
       e.preventDefault()
       let newTodo = {text: this.props.newTodoInput, completed: false, id: shortid.generate()}
       this.props.newTodoSubmit(newTodo)
-      this.props.sendInputToState("")
+      this.props.sendNewInputToState("")
     }
+  handleToggleTodo(id){
+    this.props.toggleTodo(id)
+    console.table(this.props.todoList)
+   }
 
   render() {
     let {newTodoInput, todoList } = this.props
     let todoListNodes = todoList.map( (todo, i) => {
       return (
         <div key={todo.id}>
-        <span>{todo.text} - {todo.id} </span> - {todo.completed ? 'you did it!' : 'you can do it!'} -
+        <span onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.text} - {todo.id} </span> - {todo.completed ? 'you did it!' : 'you can do it!'} -
         </div>
       )
     })
@@ -43,6 +47,11 @@ const mapStateToProps = (state) => {
   }
 }
 
+
+const toggleTodo = (id) => {
+  return {type: "TOGGLE_TODO", payload: id }
+}
+
 const sendNewInputToState = (input) => {
   return {type: "NEW_TODO_FORM_CHANGE", payload: input }
 }
@@ -51,6 +60,6 @@ const newTodoSubmit = (todo) => {
   return {type: "NEW_TODO", payload: todo }
 }
 
-HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState})(HomeView)
+HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, toggleTodo})(HomeView)
 
 export default HomeView
