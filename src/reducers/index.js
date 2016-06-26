@@ -1,5 +1,13 @@
 import { combineReducers } from 'redux';
 
+const filterViews = (state = "SHOW_ALL", action) => {
+    switch(action.type){
+      case "CHANGE_FILTER":
+      return action.payload
+      default:
+      return state
+    }
+  }
 const todoList = (state = [], action) => {
   switch(action.type){
     case 'NEW_TODO':
@@ -48,7 +56,7 @@ const todoItem = (state = {}, action) => {
 
 
 const TodoApp = combineReducers({
-  todoList, todoItem, newTodoInput
+  todoList, todoItem, newTodoInput, filterViews
 })
 
 export default TodoApp
