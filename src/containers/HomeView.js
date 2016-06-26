@@ -13,6 +13,11 @@ export default class HomeView extends Component {
       this.props.newTodoSubmit(newTodo)
       this.props.sendNewInputToState("")
     }
+
+  handleDeleteTodo(id){
+      this.props.deleteTodo(id)
+    }
+
   handleToggleTodo(id){
     this.props.toggleTodo(id)
     console.table(this.props.todoList)
@@ -24,6 +29,7 @@ export default class HomeView extends Component {
       return (
         <div key={todo.id}>
         <span onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.text} - {todo.id} </span> - {todo.completed ? 'you did it!' : 'you can do it!'} -
+        <span onClick={this.handleDeleteTodo.bind(this, todo.id)}>delete?</span>
         </div>
       )
     })
@@ -47,7 +53,6 @@ const mapStateToProps = (state) => {
   }
 }
 
-
 const toggleTodo = (id) => {
   return {type: "TOGGLE_TODO", payload: id }
 }
@@ -60,6 +65,10 @@ const newTodoSubmit = (todo) => {
   return {type: "NEW_TODO", payload: todo }
 }
 
-HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, toggleTodo})(HomeView)
+const deleteTodo = (id) => {
+  return {type: "DELETE_TODO", payload: id }
+}
+
+HomeView = connect(mapStateToProps, {newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo})(HomeView)
 
 export default HomeView

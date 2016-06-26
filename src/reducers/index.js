@@ -15,6 +15,13 @@ const todoList = (state = [], action) => {
         }
         return todo
       })
+  case 'DELETE_TODO':
+  let deleteItem = state.find( (todo) => {
+    return todo.id === action.payload
+          })
+    return [...state.slice(0, state.indexOf(deleteItem) ),
+            ...state.slice( (state.indexOf(deleteItem) + 1), (state.length))
+            ]
     default:
     return state
   }
