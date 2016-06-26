@@ -64,13 +64,15 @@ export default class HomeView extends Component {
     }
     let todoListNodes = todoList.map( (todo, i) => {
       return (
-        <div key={todo.id}>
-        <span style={todo.completed ? {textDecoration: "line-through"} : {textDecoration: "none"} } onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.text} </span> - {todo.completed ? '' : 'you can do it!'} -
-        <span onClick={this.handleDeleteTodo.bind(this, todo.id)}>delete?</span>
-        <span onClick={this.handleShowEdit.bind(this, todo.id)}>edit?</span>
+        <div key={todo.id} className="todo-item">
+        <span style={todo.completed ? {textDecoration: "line-through"} : {textDecoration: "none"} }><h3>{todo.text}</h3></span>
+        <button onClick={this.handleDeleteTodo.bind(this, todo.id)}>Delete</button>
+        <button onClick={this.handleShowEdit.bind(this, todo.id)}>Edit</button>
+        <button onClick={this.handleToggleTodo.bind(this, todo.id)}>{todo.completed ? 'Toggle back' : 'I finished it!'}</button>
+
         {todo.showEdit ?
         <form onSubmit={this.handleEditTodoSubmit.bind(this)}>
-          <input type="text" onClick={selectTodo.bind(this, todo.id)} onChange={this.handleEditTodoChange.bind(this)} value={selectedTodoId === todo.id ? editTodoInput : ''} />
+          <input type="text" onClick={selectTodo.bind(this, todo.id)} onChange={this.handleEditTodoChange.bind(this)} value={selectedTodoId === todo.id && editTodoInput. length > 0 ? editTodoInput : todo.text} />
           <button type="submit">Edit this todo</button>
         </form> :
         ''}
@@ -78,17 +80,20 @@ export default class HomeView extends Component {
       )
     })
     return(
-    <div>
+    <div style={{textAlign:"center"}}>
     <h2>Now showing {filterName} todos</h2>
-      {todoListNodes}
+
       <form onSubmit={this.handleNewTodoSubmit.bind(this)}>
         <input type="text" onChange={this.handleNewTodoChange.bind(this)} value={newTodoInput} />
         <button type="submit">Add a todo</button>
       </form>
+    <button onClick={this.handleViewChange.bind(this, "SHOW_ALL")}>Show all todos</button>
+    <button onClick={this.handleViewChange.bind(this, "SHOW_COMPLETED")}>Show completed</button>
+    <button onClick={this.handleViewChange.bind(this, "SHOW_INCOMPLETE")}>Show incomplete todos</button>
 
-        <button onClick={this.handleViewChange.bind(this, "SHOW_ALL")}>Show all todos</button>
-        <button onClick={this.handleViewChange.bind(this, "SHOW_COMPLETED")}>Show completed</button>
-        <button onClick={this.handleViewChange.bind(this, "SHOW_INCOMPLETE")}>Show incomplete todos</button>
+    <div className="todo-container">
+      {todoListNodes}
+    </div>
 
     </div>
     )
