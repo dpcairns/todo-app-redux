@@ -1,12 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import ToggleButtons from '../components/ToggleButtons'
+import AddForm from '../components/AddForm'
 import shortid from 'shortid'
 
 export default class HomeView extends Component {
+
     handleNewTodoChange(e) {
       e.preventDefault()
       this.props.sendNewInputToState(e.target.value)
     }
+
     handleNewTodoSubmit(e){
       e.preventDefault()
       if (this.props.newTodoInput.length > 0){
@@ -23,10 +27,12 @@ export default class HomeView extends Component {
 
     handleEditTodoSubmit(e){
       e.preventDefault()
+      if(this.props.editTodoInput.length > 0){
       this.props.editTodo(this.props.selectedTodoId, this.props.editTodoInput)
       this.props.sendEditInputToState("")
       this.props.selectTodo("")
     }
+  }
 
   handleDeleteTodo(id){
       this.props.deleteTodo(id)
@@ -62,6 +68,7 @@ export default class HomeView extends Component {
         return !d.completed
       })
     }
+
     let todoListNodes = todoList.map( (todo, i) => {
       return (
         <div key={todo.id} className="todo-item">
@@ -81,15 +88,10 @@ export default class HomeView extends Component {
     })
     return(
     <div style={{textAlign:"center"}}>
-    <h2>Now showing {filterName} todos</h2>
+    <h2>Now showing <span style={{textDecoration: "underline"}}>{filterName}</span> todos</h2>
 
-      <form onSubmit={this.handleNewTodoSubmit.bind(this)}>
-        <input type="text" onChange={this.handleNewTodoChange.bind(this)} value={newTodoInput} />
-        <button type="submit">Add a todo</button>
-      </form>
-    <button onClick={this.handleViewChange.bind(this, "SHOW_ALL")}>Show all todos</button>
-    <button onClick={this.handleViewChange.bind(this, "SHOW_COMPLETED")}>Show completed</button>
-    <button onClick={this.handleViewChange.bind(this, "SHOW_INCOMPLETE")}>Show incomplete todos</button>
+    <AddForm newTodoInput={newTodoInput} handleNewTodoSubmit={this.handleNewTodoSubmit.bind(this)} handleNewTodoChange={this.handleNewTodoChange.bind(this)}/>
+    <ToggleButtons handleViewChange={this.handleViewChange.bind(this)}/>
 
     <div className="todo-container">
       {todoListNodes}
@@ -110,41 +112,42 @@ const mapStateToProps = (state) => {
   }
 }
 
-const toggleTodo = (id) => {
+export const toggleTodo = (id) => {
   return {type: "TOGGLE_TODO", payload: id }
 }
 
-const sendNewInputToState = (input) => {
+export const sendNewInputToState = (input) => {
   return {type: "NEW_TODO_FORM_CHANGE", payload: input }
 }
 
-const newTodoSubmit = (todo) => {
+export const newTodoSubmit = (todo) => {
   return {type: "NEW_TODO", payload: todo }
 }
 
-const deleteTodo = (id) => {
+export const deleteTodo = (id) => {
   return {type: "DELETE_TODO", payload: id }
 }
 
-const toggleEdit = (id) => {
+export const toggleEdit = (id) => {
   return {type: "TOGGLE_EDIT", payload: id }
 }
 
-const selectTodo = (id) => {
+export const selectTodo = (id) => {
   return {type: "SELECT_TODO", payload: id }
 }
 
-const sendEditInputToState = (text) => {
+export const sendEditInputToState = (text) => {
   return {type: "EDIT_TODO_FORM_CHANGE", payload: text }
 }
 
-const editTodo = (id, text) => {
+export const editTodo = (id, text) => {
   return {type: "EDIT_TODO", payload: {_id: id, _text: text} }
 }
 
-const changeFilter = (view) => {
+export const changeFilter = (view) => {
   return {type: "CHANGE_FILTER", payload: view }
 }
+
 
 HomeView = connect(mapStateToProps, {editTodo, sendEditInputToState, newTodoSubmit, sendNewInputToState, deleteTodo, toggleTodo, changeFilter, toggleEdit, selectTodo})(HomeView)
 

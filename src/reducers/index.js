@@ -91,7 +91,6 @@ const todoItem = (state = {}, action) => {
 const selectedTodoId = (state = "", action) => {
   switch(action.type){
     case 'SELECT_TODO':
-
       console.log(action.payload)
     return action.payload
     default:
